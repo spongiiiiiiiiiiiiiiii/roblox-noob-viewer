@@ -1,23 +1,9 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Roblox Noob 3D Model</title>
-  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
-  <style>
-    html, body { height: 100%; margin: 0; }
-    body { display: grid; place-items: center; background: #111827; color: #f9fafb; font: 16px system-ui, sans-serif; }
-    main { width: min(100vw, 900px); height: min(100vh, 700px); display: grid; grid-template-rows: auto 1fr; }
-    h1 { margin: 18px 24px 8px; font-size: 1.1rem; font-weight: 600; }
-    model-viewer { width: 100%; height: 100%; background: radial-gradient(circle at 50% 35%, #374151, #111827 70%); }
-    p { margin: 0 24px 14px; color: #cbd5e1; font-size: .9rem; }
-  </style>
-</head>
-<body>
-  <main>
-    <div><h1>Roblox Noob</h1><p>Drag to rotate · scroll or pinch to zoom</p></div>
-    <model-viewer src="roblox-noob.glb" camera-controls auto-rotate shadow-intensity="1" exposure="1" alt="A 3D Roblox noob model"></model-viewer>
-  </main>
-</body>
-</html>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Tiny Roblox Clone</title><style>html,body{margin:0;height:100%;overflow:hidden;background:#87ceeb;font-family:system-ui}#hud{position:fixed;z-index:2;top:14px;left:16px;color:white;text-shadow:0 2px 4px #234;font-weight:700}#hint{font-size:13px;font-weight:500}</style></head><body><div id="hud">Tiny Roblox Clone<div id="hint">WASD / arrows: walk · Space: jump · drag: camera</div></div>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';import{GLTFLoader}from'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
+const s=new THREE.Scene();s.background=new THREE.Color(0x87ceeb);s.fog=new THREE.Fog(0x87ceeb,35,75);const c=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,200),r=new THREE.WebGLRenderer({antialias:true});r.setSize(innerWidth,innerHeight);r.setPixelRatio(Math.min(devicePixelRatio,2));r.shadowMap.enabled=true;document.body.appendChild(r.domElement);s.add(new THREE.HemisphereLight(0xffffff,0x5b7f46,2));let sun=new THREE.DirectionalLight(0xffffff,2.5);sun.position.set(-15,25,10);sun.castShadow=true;s.add(sun);
+let g=new THREE.Mesh(new THREE.BoxGeometry(70,1,70),new THREE.MeshStandardMaterial({color:0x55a84f}));g.position.y=-.5;g.receiveShadow=true;s.add(g);function b(x,y,z,w,h,d,col){let m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshStandardMaterial({color:col}));m.position.set(x,y,z);m.castShadow=m.receiveShadow=true;s.add(m)}for(let i=0;i<18;i++){let x=(Math.random()-.5)*52,z=(Math.random()-.5)*52;b(x,.5,z,1+Math.random()*2,1+Math.random()*2,1+Math.random()*2,0x7c5a3b);b(x,1.8,z,2.5,1.5,2.5,0x3d963f)}for(let i=-3;i<=3;i++)b(i*4,.25,-10,3,.5,3,0xe7c15b);
+let p=new THREE.Group();p.position.set(0,0,4);s.add(p);let av,mix;new GLTFLoader().load('roblox-noob.glb',q=>{av=q.scene;av.scale.setScalar(1.7);av.traverse(o=>{if(o.isMesh)o.castShadow=true});p.add(av);if(q.animations.length){mix=new THREE.AnimationMixer(av);mix.clipAction(q.animations[0]).play()}});
+let k={},yaw=.35,pitch=.35,dist=9,drag=false,lx,ly;onkeydown=e=>{k[e.key.toLowerCase()]=true;if(e.key===' ')e.preventDefault()};onkeyup=e=>k[e.key.toLowerCase()]=false;r.domElement.onpointerdown=e=>{drag=true;lx=e.clientX;ly=e.clientY};onpointerup=()=>drag=false;onpointermove=e=>{if(drag){yaw-=(e.clientX-lx)*.006;pitch=THREE.MathUtils.clamp(pitch-(e.clientY-ly)*.006,.05,1.15);lx=e.clientX;ly=e.clientY}};r.domElement.onwheel=e=>dist=THREE.MathUtils.clamp(dist+e.deltaY*.01,4,16);
+let vy=0,ground=true,last=performance.now();function loop(){requestAnimationFrame(loop);let dt=Math.min((performance.now()-last)/1000,.05);last=performance.now();if(mix)mix.update(dt);let f=(k.w||k.arrowup?1:0)-(k.s||k.arrowdown?1:0),x=(k.d||k.arrowright?1:0)-(k.a||k.arrowleft?1:0),mv=f||x,d=new THREE.Vector3(x,0,-f);if(d.lengthSq())d.normalize();p.position.x+=d.x*7*dt;p.position.z+=d.z*7*dt;if(mv)p.rotation.y=Math.atan2(d.x,d.z);if((k[' ']||k.spacebar)&&ground){vy=9;ground=false}vy-=22*dt;p.position.y+=vy*dt;if(p.position.y<=0){p.position.y=0;vy=0;ground=true}if(av){av.position.y=(mv&&ground?Math.abs(Math.sin(performance.now()*.014))*.08:0)+(ground?0:Math.sin(performance.now()*.008)*.04);av.rotation.z=mv?Math.sin(performance.now()*.014)*.035:0}let t=p.position.clone();t.y+=2.1;let cp=Math.cos(pitch),sp=Math.sin(pitch);c.position.set(t.x+Math.sin(yaw)*cp*dist,t.y+sp*dist,t.z+Math.cos(yaw)*cp*dist);c.lookAt(t);r.render(s,c)}loop();onresize=()=>{c.aspect=innerWidth/innerHeight;c.updateProjectionMatrix();r.setSize(innerWidth,innerHeight)};
+</script></body></html>
